@@ -1,37 +1,13 @@
-from dataclasses import dataclass
-from app.store.database.sqlalchemy_base import db
+from app.store.database.sqlalchemy_base import BaseModel
 
 
-@dataclass
-class Theme:
-    id: int | None
-    title: str
-
-
-@dataclass
-class Question:
-    id: int | None
-    title: str
-    theme_id: int
-    answers: list["Answer"]
-
-
-@dataclass
-class Answer:
-    title: str
-    is_correct: bool
-
-
-class ThemeModel(db):
+class ThemeModel(BaseModel):
     __tablename__ = "themes"
-    pass
 
 
-class QuestionModel(db):
+class QuestionModel(BaseModel):
     __tablename__ = "questions"
-    pass
 
 
-class AnswerModel(db):
+class AnswerModel(BaseModel):
     __tablename__ = "answers"
-    pass

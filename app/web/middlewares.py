@@ -4,21 +4,11 @@ import typing
 from aiohttp.web_exceptions import HTTPException, HTTPUnprocessableEntity
 from aiohttp.web_middlewares import middleware
 from aiohttp_apispec import validation_middleware
-from aiohttp_session import get_session
 
-from app.admin.models import Admin
 from app.web.utils import error_json_response
 
 if typing.TYPE_CHECKING:
     from app.web.app import Application, Request
-
-
-@middleware
-async def auth_middleware(request: "Request", handler: callable):
-    session = await get_session(request)
-    if session:
-        request.admin = Admin.from_session(session)
-    return await handler(request)
 
 
 HTTP_ERROR_CODES = {
@@ -36,11 +26,10 @@ HTTP_ERROR_CODES = {
 async def error_handling_middleware(request: "Request", handler):
     try:
         response = await handler(request)
-        return response
     except HTTPUnprocessableEntity as e:
         return error_json_response(
             http_status=400,
-            status="bad_request",
+            status=HTTP_ERROR_CODES[400],
             message=e.reason,
             data=json.loads(e.text),
         )
@@ -56,8 +45,9 @@ async def error_handling_middleware(request: "Request", handler):
             http_status=500, status="internal server error", message=str(e)
         )
 
+    return response
+
 
 def setup_middlewares(app: "Application"):
-    app.middlewares.append(auth_middleware)
     app.middlewares.append(error_handling_middleware)
     app.middlewares.append(validation_middleware)

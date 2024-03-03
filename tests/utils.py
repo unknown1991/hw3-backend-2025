@@ -1,30 +1,39 @@
-from sqlalchemy import inspect
-from sqlalchemy.ext.asyncio import AsyncEngine
+from collections.abc import Iterable
+
+from app.quiz.models import AnswerModel, QuestionModel, ThemeModel
 
 
-def ok_response(data: dict):
+def theme_to_dict(theme: ThemeModel) -> dict:
     return {
-        "status": "ok",
-        "data": data,
+        "id": theme.id,
+        "title": theme.title,
     }
 
 
-def error_response(status: str, message: str, data: dict):
+def themes_to_dict(themes: Iterable[ThemeModel]) -> list[dict]:
+    return [theme_to_dict(theme) for theme in themes]
+
+
+def question_to_dict(question: QuestionModel) -> dict:
     return {
-        "status": status,
-        "message": message,
-        "data": data,
+        "id": question.id,
+        "title": question.title,
+        "theme_id": question.theme_id,
     }
 
 
-def use_inspector(conn):
-    inspector = inspect(conn)
-    return inspector.get_table_names()
+def questions_to_dict(questions: Iterable[QuestionModel]) -> list[dict]:
+    return [question_to_dict(question) for question in questions]
 
 
-async def check_empty_table_exists(cli, tablename: str):
-    engine: AsyncEngine = cli.app.database._engine
-    async with engine.begin() as conn:
-        tables = await conn.run_sync(use_inspector)
+def answer_to_dict(answer: AnswerModel) -> dict:
+    return {
+        "id": answer.id,
+        "title": answer.title,
+        "question_id": answer.question_id,
+        "is_correct": answer.is_correct,
+    }
 
-    assert tablename in tables
+
+def answers_to_dict(answers: Iterable[AnswerModel]) -> list[dict]:
+    return [answer_to_dict(answer) for answer in answers]
