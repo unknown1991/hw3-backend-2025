@@ -2,6 +2,7 @@ name: Check homework
 on: [push]
 jobs:
   runner-job:
+    if: ${{ github.repository_owner != 'ktsstudio' }}
     runs-on: ubuntu-latest
     env:
       IMAGE: 'ktshub/backend-summer-2021:task-9676ecaf-e2a4-473a-803f-df790da37aaa'
