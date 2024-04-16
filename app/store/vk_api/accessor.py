@@ -94,7 +94,7 @@ class VkApiAccessor(BaseAccessor):
                     object=UpdateObject(
                         message=UpdateMessage(
                             id=update["object"]["message"]["id"],
-                            from_id=update["object"]["message"]["peer_id"],
+                            from_id=update["object"]["message"]["from_id"],
                             text=update["object"]["message"]["text"],
                         )
                     ),
