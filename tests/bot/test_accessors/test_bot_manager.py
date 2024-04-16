@@ -24,7 +24,7 @@ class TestHandleUpdates:
             object=UpdateObject(
                 message=UpdateMessage(
                     id=1,
-                    from_id=1,
+                    from_id=2,
                     text="kek",
                 ),
             ),
@@ -39,5 +39,5 @@ class TestHandleUpdates:
             message: Message = store.vk_api.send_message.mock_calls[0].kwargs[
                 "message"
             ]
-        assert message.user_id == 1
+        assert message.user_id == 2
         assert message.text
