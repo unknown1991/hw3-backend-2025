@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     AsyncSession,
     async_sessionmaker,
+    create_async_engine
 )
 from sqlalchemy.orm import DeclarativeBase
 
@@ -22,14 +23,20 @@ class Database:
         self.session: async_sessionmaker[AsyncSession] | None = None
 
     async def connect(self, *args: Any, **kwargs: Any) -> None:
-        raise NotImplementedError
-        # self.engine = create_async_engine(
-        #     URL.create(
-        #     ),
-        # )
-        # self.session = async_sessionmaker(
-        #
-        # )
+        db_config = self.app.config.database
+        url = f"postgresql+asyncpg://{db_config.user}:{db_config.password}@{db_config.host}:{db_config.port}/{db_config.database}"
+        
+        self.engine = create_async_engine(
+            url,
+            echo=True
+        )
+        self.session = async_sessionmaker(
+            self.engine, 
+            expire_on_commit=False, 
+            class_=AsyncSession
+        )
 
     async def disconnect(self, *args: Any, **kwargs: Any) -> None:
-        raise NotImplementedError
+        await self.engine.dispose()
+    
+    
